@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# Ignore virtual environment internals but keep the notebook artifacts.
+ml-env/Include/
+ml-env/Lib/
+ml-env/Scripts/
+ml-env/pyvenv.cfg
