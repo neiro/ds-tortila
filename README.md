@@ -1,15 +1,75 @@
-# TurtleCV Weight Prediction
+# Прогноз массы зелёных морских черепах по данным TurtleCV
 
-This repository contains a Jupyter-based machine learning project for predicting sea turtle weight from TurtleCV measurements using linear regression.
+Этот репозиторий содержит учебный проект по машинному обучению, в котором по измерениям панциря, головы и ласт предсказывается масса зелёной морской черепахи `Chelonia mydas`.
 
-## Repository layout
+Основной результат проекта - воспроизводимый Jupyter Notebook с полным циклом работы: от проверки и очистки данных до сравнения линейных моделей, выбора лучшей конфигурации и функции для прикладного прогноза веса.
 
-- `ml-env/work.ipynb` - working notebook for the project.
-- `ml-env/template.ipynb` - original notebook template.
-- `ml-env/task.txt` - project brief and evaluation criteria.
-- `ml-env/requirements.txt` - placeholder dependency list from the local environment.
+## Цель проекта
 
-## Notes
+Нужно было построить интерпретируемую модель регрессии, которая по данным TurtleCV оценивает массу черепахи и остаётся достаточно точной в практическом диапазоне взрослых особей.
 
-- The source materials currently live inside the `ml-env` directory.
-- The repository ignores the Python virtual environment internals (`Lib`, `Scripts`, `Include`) and keeps only the notebook artifacts.
+В работе акцент сделан на трёх вещах:
+- аккуратная проверка качества данных;
+- сравнение нескольких линейных моделей по `MAE`;
+- понятный и воспроизводимый pipeline без утечки данных.
+
+## Что сделано
+
+В notebook:
+- выделены записи только по виду `Chelonia mydas`;
+- проверены и обработаны пропуски и дубликаты;
+- найдена и исправлена системная ошибка, где часть размеров панциря была умножена на `10`;
+- построены графики распределений, корреляций и мультиколлинеарности;
+- подготовлены базовые и инженерные признаки;
+- сравнены `DummyRegressor`, `LinearRegression`, `Ridge`, `Lasso` и `SGDRegressor` с разными значениями `loss`;
+- выбрана лучшая модель по главному критерию `MAE`.
+
+## Краткие выводы
+
+Лучший результат показала модель `Lasso(alpha=0.001)` на стандартизованных признаках и расширенном наборе признаков.
+
+Ключевые метрики:
+- `MAE` на взрослых черепахах `50-150` кг: `2.943` кг на `validation` и `2.923` кг на `test`;
+- общий `MAE`: `3.264` кг на `validation` и `3.271` кг на `test`;
+- `R²`: `0.986` на `validation` и `0.984` на `test`.
+
+По итогам работы модель можно рекомендовать как первый рабочий вариант именно для `Chelonia mydas`, если входные данные проходят базовую проверку качества.
+
+## Структура репозитория
+
+- `ml-env/work.ipynb` - основной рабочий notebook с анализом, моделями и итоговыми выводами.
+- `ml-env/requirements.txt` - зависимости для запуска notebook.
+- `LICENSE` - лицензия репозитория.
+
+## Как запустить
+
+1. Создайте и активируйте виртуальное окружение.
+2. Установите зависимости.
+3. Запустите Jupyter и откройте `ml-env/work.ipynb`.
+
+Пример для PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r ml-env/requirements.txt
+jupyter lab
+```
+
+## Данные
+
+Исходный датасет: `https://code.s3.yandex.net/datasets/turtles.csv`
+
+Notebook умеет брать данные в таком порядке:
+- из `'/datasets/turtles.csv'`, если файл уже есть в учебной среде;
+- из локального `turtles.csv`, если он доступен в рабочем каталоге;
+- по резервному URL источника.
+
+## Как проверить результат
+
+После запуска notebook сверху вниз в нём будут:
+- вся очистка данных и объяснение принятых решений;
+- таблица сравнения моделей на `validation`;
+- проверка лучшей модели на `test`;
+- оценка важности признаков;
+- функция для прогноза веса новой черепахи.
